@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>WASM Binary Tree example</title>
+
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("encode.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <label for="texts">Choose a text:</label>
+        <select name="texts" id="texts" onclick="populate(value)">
+            <option value="goldenbull.pxt">GoldenBull</option>
+            <option value="shakespeare.pxt">Shakespeare</option>
+        </select>
+    </div>
+    <textarea id="textinput" name="textinput" cols="80" rows="20"></textarea>
+    <input id="button" type="submit" name="button" value="Calculate" onclick="json(textinput.value)" />
+    <textarea id="textoutput" name="textoutput" cols="80" rows="20"></textarea>
+</body>
+<script>
+    var json = function (input) {
+        var result = searchTree(input)
+        if ((result != null) && ('error' in result)) {
+            console.log("Go return value", result)
+            textoutput.value = ""
+            alert(result.error)
+        }
+    }
+
+    function populate(value) {
+        fetch(value)
+        .then(response => response.text())
+        .then(text => textinput.value = text);
+    }
+</script>
+
+</html>
